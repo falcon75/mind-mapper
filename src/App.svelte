@@ -1,6 +1,7 @@
 <script lang="ts">
   import logo from './assets/svelte.png'
   import Counter from './lib/Counter.svelte'
+  import MindMap from './components/MindMap.svelte';
 </script>
 
 <main>
@@ -18,6 +19,7 @@
     Check out <a href="https://github.com/sveltejs/kit#readme">SvelteKit</a> for
     the officially supported framework, also powered by Vite!
   </p>
+  <MindMap />
 </main>
 
 <style>
