@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Mapper</title>
+</head>
+
+<body onload="load()">
+
+<div id="main">
+
+</div>
+
+<p id="info">Click to Zoom</p>
+
+</body>
+
+<script type="text/javascript">
+
+  let articles = [
+    {
+      'id': 1,
+      'main': `<h3> Little container here</h3>
+                    <p>With some info about a particular topic</p>`,
+      'detail': `<h3> Little container here</h3>
+                    <p>With some info about a particular topic</p>
+                    <p>Hello</p>`,
+      'top': 50,
+      'left': 50,
+      'height': 100,
+      'width': 400
+    },
+    {
+      'id': 2,
+      'main': `<h3> Little container here</h3>
+                    <p>With some info about a particular topic</p>`,
+      'detail': `<h3> Little container here</h3>
+                    <p>With some info about a particular top</p>`,
+      'top': 210,
+      'left': 50,
+      'height': 200,
+      'width': 400
+    },
+    {
+      'id': 3,
+      'main': `<h3> Central Topic</h3>
+                    <p>With a little info</p>`,
+      'detail': `<h2> Central Topic</h2>
+                    <p>Now theres heaps more space so that you can fill out a longer introduction to the central topic and how it relates to the others</p>`,
+      'top': 470,
+      'left': 510,
+      'height': 200,
+      'width': 200
+    },
+    {
+      'id': 4,
+      'main': `<h3> Little container here</h3>
+                    <p>With some info about a particular topic</p>`,
+      'detail': `<h3> Little container here</h3>
+                    <p>With some info about a particular topic</p>`,
+      'top': 470,
+      'left': 770,
+      'height': 200,
+      'width': 200
+    },
+    {
+      'id': 5,
+      'main': `<h3> Little container here</h3>
+                    <p>With some info about a particular topic</p>`,
+      'detail': `<h3> Little container here</h3>
+                    <p>With some info about a particular top</p>`,
+      'top': 210,
+      'left': 770,
+      'height': 200,
+      'width': 400
+    },
+    {
+      'id': 6,
+      'main': `<h3>Another Central Topic</h3>
+                    <p>With a little info</p>`,
+      'detail': `<h2>Another Central Topic</h2>
+                    <p>Now theres heaps more space so that you can fill out a longer introduction to the central topic and how it relates to the others</p>`,
+      'top': 470,
+      'left': 1510,
+      'height': 200,
+      'width': 200
+    },
+    {
+      'id': 7,
+      'main': `<h3> Little container here</h3>
+                    <p>With some info about a particular topic</p>`,
+      'detail': `<h3> Little container here</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque interdum venenatis diam id semper. Sed ullamcorper porta leo, feugiat dignissim nulla. Pellentesque volutpat, enim at commodo blandit, velit lorem convallis erat, in molestie ligula magna ac nisl. Ut accumsan sit amet enim at mollis. Quisque faucibus est eu tellus rutrum egestas. Aenean quis lectus ut leo gravida interdum. Donec condimentum massa vitae blandit lobortis. Duis molestie orci luctus aliquam pellentesque. Nam mattis aliquet augue a varius. Integer vulputate eu ex sed rutrum.
+
+Etiam a felis neque. Phasellus sed suscipit nisi. Praesent pretium mollis tristique. Phasellus nec dictum erat, nec rutrum magna. Curabitur scelerisque tincidunt nulla sed cursus. Nulla et libero sit amet erat luctus dapibus sit amet non nisl. Proin porttitor volutpat rutrum. Quisque quis ex viverra, fringilla tellus id, luctus tortor. Nunc mollis diam eget diam sollicitudin congue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Duis quam tortor, pharetra vitae lorem a, interdum pharetra risus. Vestibulum ex nunc, tempus auctor nisi in, imperdiet porttitor elit. Curabitur dapibus erat massa, luctus accumsan leo fringilla quis. Integer mollis, turpis sed mattis facilisis, ligula urna auctor massa, vel consequat sem velit ac lacus. Duis posuere lobortis risus in ultrices. Proin in lorem molestie, ornare nisl ut, ultrices metus.
+
+Donec luctus, neque quis venenatis gravida, lacus urna posuere magna, quis sollicitudin nunc sem a lorem. Quisque venenatis, dui vitae ornare aliquam, dui sapien tempus libero, ut lacinia orci arcu sit amet sem. Ut vel pulvinar purus, non viverra nulla. Vivamus a ex eleifend, accumsan massa eu, malesuada dui. Nam auctor lorem turpis, non congue velit semper a. Praesent quis viverra tortor. Curabitur porta est vitae dui feugiat aliquam.
+
+Fusce neque justo, condimentum vel sollicitudin sed, efficitur nec tellus. Nullam finibus lectus felis, quis laoreet libero viverra a. Duis sit amet quam posuere, consectetur neque eget, faucibus dolor. Quisque turpis tortor, congue eu scelerisque ac, mollis ut metus. Sed sit amet ornare diam. Phasellus vehicula laoreet lectus, consectetur feugiat nisi bibendum vel. Donec eget rhoncus sapien. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque augue quam, rutrum vel nulla id, hendrerit commodo enim.
+
+Suspendisse vitae tincidunt mi, eu feugiat tortor. Nulla rutrum metus quis lacus porttitor, vel fermentum mauris tempus. Sed aliquam metus lorem, sed condimentum nulla ornare vitae. Nullam ornare lorem nibh, eu maximus elit ornare nec. Quisque laoreet sed est nec sodales. Vestibulum suscipit augue lectus, vel sollicitudin odio tristique ac. Fusce eu tincidunt turpis, eget auctor tellus. Vestibulum molestie quam a mi pellentesque, vel imperdiet lectus tincidunt.
+
+</p>`,
+      'top': 770,
+      'left': 770,
+      'height': 200,
+      'width': 800
+    },
+    {
+      'id': 8,
+      'main': `<h3> Little container here</h3>
+                    <p>With some info about a particular topic</p>`,
+      'detail': `<h3> Little container here</h3>
+                    <p>With some info about a particular top</p>`,
+      'top': 210,
+      'left': 1800,
+      'height': 200,
+      'width': 400
+    },
+    {
+      'id': 9,
+      'main': `<h3> Little container here</h3>
+                    <p>With some info about a particular topic</p>`,
+      'detail': `<h3> Little container here</h3>
+                    <p>With some info about a particular top</p>`,
+      'top': 650,
+      'left': 1800,
+      'height': 200,
+      'width': 400
+    }
+  ]
+
+  let zoomedIn = false;
+
+  function load() {
+    for (const item of articles) {
+      document.getElementById("main").innerHTML += `<div id="${item.id}" class="container"></div>`;
+    }
+    layout()
+  }
+
+  function layout() {
+    const s = 2;
+    for (const item of articles) {
+      let elem = document.getElementById(item.id);
+      elem.innerHTML = zoomedIn ? item.detail : item.main;
+      elem.style.top = zoomedIn ? String(s*item.top)+"px" : String(item.top)+"px";
+      elem.style.left = zoomedIn ? String(s*item.left)+"px" : String(item.left)+"px";
+      elem.style.height = zoomedIn ? String(s*item.height)+"px" : String(item.height)+"px";
+      elem.style.width = zoomedIn ? String(s*item.width)+"px" : String(item.width)+"px";
+    }
+  }
+
+  window.addEventListener('click', function(event) {
+    toggleZoom(event);
+  });
+
+  function toggleZoom(event) {
+    zoomedIn = !zoomedIn
+    document.getElementById("info").hidden = zoomedIn
+    layout()
+
+    setTimeout( function() {
+      if (zoomedIn) {
+        window.scrollTo(2*event.x - window.outerWidth/2, 2*event.y - window.outerHeight/2);
+      }
+    }, 200)
+  }
+
+</script>
+
+<style>
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    position: relative;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    background-color: white;
+  }
+
+  .container  {
+    position: absolute;
+    background: lightgray;
+    border-radius: 10px;
+    padding: 20px;
+    transition: width 150ms, height 150ms, top 150ms, left 150ms ease;
+  }
+
+  #info {
+    position: absolute;
+    background: black;
+    color: white;
+    border-radius: 6px;
+    padding: 4px;
+    height: 24px;
+    top: 95%;
+    left: 5%;
+  }
+
+</style>
+
+</html>
