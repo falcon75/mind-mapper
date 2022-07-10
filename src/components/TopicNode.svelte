@@ -14,29 +14,42 @@
 
 <style>
     .topicnode {
-        position: relative;
+        fill: lightpink;
+    }
 
-        background-color: lightpink;
-        opacity: 0.8;
-        width: 150px;
-        height: 150px;
+    .topicnode foreignObject {
+        font-size: 2px;
     }
 
     .topicnode h3 {
-        font-size: small;
         font-weight: 500;
         font-style: italic;
     }
 </style>
 
-<div class="topicnode"
+<g class="topicnode"
     on:click={selectNode}
 >
-    <h2>{title}</h2>
-    {#if (showDetail)}
-        <h3>Selected</h3>
-    {/if}
+    <rect
+        x={25*key}
+        y={25*key}
+        width={20}
+        height={20}
+    />
+
+    <foreignObject
+        x={25*key}
+        y={25*key}
+        width={20}
+        height={20}
+    >
+        <h2>{title}</h2>
+        {#if (showDetail)}
+            <h3>Selected</h3>
+        {/if}
+    
+    </foreignObject>
 
     <slot {showDetail} />
 
-</div>
+</g>

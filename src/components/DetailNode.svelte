@@ -10,10 +10,15 @@
     bottom: 0;
 
     background-color: lightcoral;
-    font-size: 0.5rem;
+    font-size: 2px;
 }
 </style>
 
-<div class="detailnode">
-    <h2>{title} {showDetail}</h2>
-</div>
+<g class="detailnode">
+    <foreignObject
+        width={20}
+        height={20}
+    >
+        <h2>{title} {showDetail}</h2>
+    </foreignObject>
+</g>

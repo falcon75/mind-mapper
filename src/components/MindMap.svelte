@@ -1,24 +1,51 @@
 <script>
-    import { setContext } from "svelte";
-    import { writable } from "svelte/store";
+    import * as d3 from "d3"
 
-    import { focusId } from "./mindmap";
+    import { focusId, mindmapData } from "./mindmap";
     import TopicNode from "./TopicNode.svelte";
     import DetailNode from "./DetailNode.svelte";
+    import { onMount } from "svelte";
+
+    let el;
+
+    $: {
+        // Zoom into relevant section when focusId is changed
+        const zoomPosition = focusId
+    }
+
+    onMount(() => {
+        const nodes = mindmapData.map((d) => {
+            return {
+                ...d,
+            }
+        })
+
+        // TODO: Look into d3 forceSimulation
+        
+    })
+
 </script>
 
 <style>
     .mindmap {
         background-color: lightgray;
         width: 50vw;
+        height: 50vw;
         margin-inline: auto;
     }
 </style>
 
 <div class="mindmap">
-    <TopicNode title="topic 1" key={1} let:showDetail>
-        <DetailNode title="detail 1a" {showDetail}/>
-    </TopicNode>
-    <TopicNode title="topic 2" key={2}/>
-    <TopicNode title="topic 3" key={3}/>
+    <svg
+        bind:this={el}
+        viewBox="0 0 100 100"
+    >
+        {#each mindmapData as topic}
+            <TopicNode title={topic.title} key={topic.key} let:showDetail>
+                {#each topic.children as detail}
+                    <DetailNode title={detail.title} {showDetail}/>
+                {/each}
+            </TopicNode>
+        {/each}
+    </svg>
 </div>
