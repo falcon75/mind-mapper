@@ -3,7 +3,6 @@
 
     import { focusId, mindmapData, type Node, type MindmapForceNode, type MindmapForceLink } from "./mindmap";
     import TopicNode from "./TopicNode.svelte";
-    import DetailNode from "./DetailNode.svelte";
     import { onMount } from "svelte";
 
     let el;
