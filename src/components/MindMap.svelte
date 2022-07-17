@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as d3 from "d3"
 
-    import { focusId, mindmapData, type Node, type ForceNode } from "./mindmap";
+    import { focusId, mindmapData, type Node, type MindmapForceNode, type MindmapForceLink } from "./mindmap";
     import TopicNode from "./TopicNode.svelte";
     import DetailNode from "./DetailNode.svelte";
     import { onMount } from "svelte";
@@ -16,24 +16,39 @@
 
     // Convert to nodes for force simulation
 
-    const flat = (data: Node[], nodes: ForceNode[]) => {
+    const flat = (data: Node[], nodes: MindmapForceNode[], links: MindmapForceLink[]) => {
             data.forEach((node) => {
-                node.key = nodes.length
+                // node.id = nodes.length
                 nodes.push({...node})
                 if (node.children.length > 0) {
-                    // if this node has children, recursively flatten
-                    nodes = flat(node.children, nodes)
+                    // if this node has children, create force links
+                    node.children.forEach((child) => {
+                        links.push({source: node.id, target: child.id})
+                    });
+                    
+                    // then recursively flatten
+                    ({nodes, links} = flat(node.children, nodes, links))
                 }
             })
-            return nodes            
+            nodes[0].fx = 0
+            nodes[0].fy = 0
+
+            return {nodes: nodes, links: links}
         }
 
-    $: nodes = flat(mindmapData, [])
+    $: ({nodes, links} = flat(mindmapData, [], []))
 
     onMount(() => {
-        let simulation = d3.forceSimulation(nodes)
-            .force("charge", d3.forceManyBody().strength(-50))
-            .force("centre", d3.forceCenter(50, 50))
+        let simulation = d3.forceSimulation<MindmapForceNode, MindmapForceLink>(nodes)
+            .force("centre", d3.forceCenter(0, 0))
+            .force("charge", d3.forceManyBody()
+                .strength(-50)
+            )
+            .force("link", d3.forceLink(links)
+                .id((d) => (d as MindmapForceNode).id)
+                .strength(0.5)
+                .distance(40)
+            )
             .on("tick", () => {
                 renderedNodes = [...nodes]
             })
@@ -53,7 +68,7 @@
 <div class="mindmap">
     <svg
         bind:this={el}
-        viewBox="-300 -300 600 600"
+        viewBox="-100 -100 200 200"
     >
         {#each mindmapData as topic}
             <TopicNode {...topic} nodes={renderedNodes}/>

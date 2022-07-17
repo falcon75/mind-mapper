@@ -1,23 +1,30 @@
 <script lang="ts">
-import { onMount } from "svelte";
+    import { onMount } from "svelte";
+    import { focusId, type Node, type MindmapForceNode } from "./mindmap"
 
-    import { focusId, type ForceNode } from "./mindmap"
-
-
+    export let id: number = 0
     export let title: string = ""
-    export let key: number = 0
-    export let nodes: ForceNode[] = []
+    export let description: string = ""
+    export let children: Node[] = []
 
-    console.log(nodes)
-    $: x = nodes[key]?.x
-    $: y = nodes[key]?.y
+    export let nodes: MindmapForceNode[] = []
+    export let parentShowDetail: boolean = false
+
+
+    $: x = nodes[id]?.x || 0
+    $: y = nodes[id]?.y || 0
 
     const selectNode = () => {
-        $focusId = key
+        $focusId = id
     }
 
+    let width = 20;
+    let height = 30;
+
     let showDetail: boolean
-    $: showDetail = $focusId == key
+    $: {
+        showDetail = $focusId == id
+    }
 
     onMount(() => {
         
@@ -40,29 +47,48 @@ import { onMount } from "svelte";
     }
 </style>
 
-<g class="topicnode"
-    on:click={selectNode}
->
-    <rect
-        x={x}
-        y={y}
-        width={20}
-        height={20}
-    />
-
-    <foreignObject
-        x={x}
-        y={y}
-        width={20}
-        height={20}
-    >
-        <h2>{title} {key}</h2>
-        {#if (showDetail)}
-            <h3>Selected</h3>
-        {/if}
+<g class="topic"
     
-    </foreignObject>
+>
+    <g class="topicnode"
+    on:click={selectNode}
+    >
+        <rect
+            x={x - width / 2}
+            y={y - height / 2}
+            width={width}
+            height={height}
+        />
+        <foreignObject
+            x={x - width / 2}
+            y={y - height / 2}
+            width={width}
+            height={height}
+        >
+            <h2>{title}</h2>
+            {#if (showDetail)}
+                <h3>Selected</h3>
+            {/if}
+            {#if (parentShowDetail)}
+                <h3>Parent Selected</h3>
+            {/if}
+            <p>
+                {description}
+            </p>
+        
+        </foreignObject>
+    </g>
 
-    <slot {showDetail} />
-
+    {#each children as topic}
+        <!-- recursively define TopicNodes as children -->
+        <svelte:self {...topic} {nodes} parentShowDetail={parentShowDetail || showDetail}/>
+        <line
+            x1={x}
+            y1={y}
+            x2={nodes[topic.id]?.x}
+            y2={nodes[topic.id]?.y}
+            stroke="black"
+            opacity=0.2
+        />
+    {/each}
 </g>
