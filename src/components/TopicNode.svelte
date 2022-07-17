@@ -1,15 +1,28 @@
 <script lang="ts">
+import { onMount } from "svelte";
+
+    import { focusId, type ForceNode } from "./mindmap"
+
+
     export let title: string = ""
     export let key: number = 0
+    export let nodes: ForceNode[] = []
 
-    import { focusId } from "./mindmap"
-
+    console.log(nodes)
+    $: x = nodes[key]?.x
+    $: y = nodes[key]?.y
 
     const selectNode = () => {
         $focusId = key
     }
+
     let showDetail: boolean
     $: showDetail = $focusId == key
+
+    onMount(() => {
+        
+    })
+
 </script>
 
 <style>
@@ -31,19 +44,19 @@
     on:click={selectNode}
 >
     <rect
-        x={25*key}
-        y={25*key}
+        x={x}
+        y={y}
         width={20}
         height={20}
     />
 
     <foreignObject
-        x={25*key}
-        y={25*key}
+        x={x}
+        y={y}
         width={20}
         height={20}
     >
-        <h2>{title}</h2>
+        <h2>{title} {key}</h2>
         {#if (showDetail)}
             <h3>Selected</h3>
         {/if}
