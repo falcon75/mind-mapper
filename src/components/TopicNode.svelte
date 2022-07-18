@@ -2,14 +2,11 @@
     import { onMount } from "svelte";
 
     import { focusId, view, svgPoint, getViewBox } from "./focus";
-    import { colourScheme, type Node, type MindmapForceNode } from "./mindmap"
+    import { colourScheme, type Node } from "./mindmap"
 
-    export let id: number = 0
-    export let title: string = ""
-    export let description: string = ""
-    export let children: Node[] = []
+    // export let children: Node[] = []
+    export let parentNode: d3.HierarchyPointNode<Node>;
 
-    export let nodes: MindmapForceNode[] = []
     export let parentShowDetail: boolean = false
     export let depth: number = 0
     export let updateZoom: boolean = false
@@ -18,10 +15,18 @@
     export let containerHeight;
     export let containerWidth;
 
+    const {title, description, id} = parentNode.data
 
-    $: x = nodes[id]?.x || 0
-    $: y = nodes[id]?.y || 0
 
+    // TODO: currently very questionable way of doing this
+    let x = parentNode.x || 0
+    let y = parentNode.y || 0
+    $: {
+        if (updateZoom) {
+            x = parentNode.x;
+            y = parentNode.y;
+        }
+    }
     // Focus on current element if selected
     // svgPoint function is required to account for DOM -> SVG coordinates
     let el: SVGElement;
@@ -54,6 +59,7 @@
     }
 
     let width = 20;
+    let scale = 0.7 ** parentNode.depth;
     let contentHeight: number;
 
     let showDetail: boolean
@@ -64,6 +70,10 @@
     $: styles = `
         --node-colour: ${colourScheme[depth]};
         --font-size: 2px;
+
+        transform-origin: center;
+        transform-box: fill-box;
+        transform: scale(${scale});
     `
 </script>
 
@@ -121,31 +131,26 @@ bind:this={el}
                 {#if (parentShowDetail)}
                     <h3>Parent Selected</h3>
                 {/if}
-                <p>
-                    {description}
-                </p>
+                {#if (description)}
+                    <p>
+                        {description}
+                    </p>
+                {/if}
             </div>
         
         </foreignObject>
     </g>
-
-    {#each children as topic}
+    {#if parentNode.height}
+    {#each parentNode.children as node}
         <!-- recursively define TopicNodes as children 
         svelte:self refers to current component (i.e. TopicNode)-->
         <svelte:self 
-            {...topic} {nodes} {svg} {containerHeight} {containerWidth}
+            {svg} {containerHeight} {containerWidth}
             parentShowDetail={parentShowDetail || showDetail}
+            parentNode={node}
             depth={depth + 1}
             {updateZoom}
         />
-        <line
-            x1={x}
-            y1={y}
-            x2={nodes[topic.id]?.x}
-            y2={nodes[topic.id]?.y}
-            stroke="black"
-            opacity=0.2
-            stroke-width=0.2
-        />
     {/each}
+    {/if}
 </g>

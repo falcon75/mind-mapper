@@ -1,5 +1,5 @@
 import { writable } from "svelte/store"
-import { tweened } from "svelte/motion";
+import { spring } from "svelte/motion";
 import { cubicInOut } from "svelte/easing";
 
 
@@ -7,8 +7,8 @@ export const focusId = writable(-1)
 
 const initialView = [-100, -100, 200, 200]
 export const viewValues = writable(initialView)
-export const view = tweened(initialView, {
-    easing: cubicInOut, duration: 1000
+export const view = spring(initialView, {
+    stiffness: 0.05, damping: 1.0
 })
 
 export const svgPoint = (svg: SVGSVGElement, x: number, y: number) => {
@@ -29,7 +29,6 @@ export const getViewBox = (
     ) => {
     // Set viewbox from bounding box values
     // Ensure viewbox is centred, and contained within the container
-    console.log('getting viewbox')
     const rect = el?.getBoundingClientRect()
 
     const topleft = svgPoint(svg, rect.left, rect.top)
@@ -40,9 +39,8 @@ export const getViewBox = (
 
     const aspectRatio = containerheight / containerwidth
 
-    width = Math.max(width, height / aspectRatio)
-    height = Math.max(height, width * aspectRatio)
-
+    width = Math.max(width, height / aspectRatio, 0)
+    height = Math.max(height, width * aspectRatio, 0)
     return [
         centre.x - width / 2,
         centre.y - height / 2,
