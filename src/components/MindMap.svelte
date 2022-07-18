@@ -1,17 +1,18 @@
 <script lang="ts">
-    import * as d3 from "d3"
-
-    import { focusId, mindmapData, type Node, type MindmapForceNode, type MindmapForceLink } from "./mindmap";
+    import { mindmapData, type Node, type MindmapForceNode, type MindmapForceLink } from "./mindmap";
     import TopicNode from "./TopicNode.svelte";
     import { onMount } from "svelte";
 
-    let el;
+    import * as d3 from "d3";
+    import { tweened } from "svelte/motion";
+    import { cubicInOut } from "svelte/easing";
+
     let renderedNodes = []
 
-    $: {
-        // Zoom into relevant section when focusId is changed
-        const zoomPosition = focusId
-    }
+    // Zoom into relevant section when focusId is changed
+    const initialView = [-100, -100, 200, 200]
+
+    const view = tweened([initialView], {easing: cubicInOut, duration: 1000})
 
     // Convert to nodes for force simulation
 
@@ -61,12 +62,12 @@
         width: 50vw;
         height: 50vw;
         margin-inline: auto;
+        overflow: hidden;
     }
 </style>
 
 <div class="mindmap">
     <svg
-        bind:this={el}
         viewBox="-100 -100 200 200"
     >
         {#each mindmapData as topic}

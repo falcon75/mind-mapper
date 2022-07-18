@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { focusId, type Node, type MindmapForceNode } from "./mindmap"
+    import { focusId } from "./focus";
+    import { colourScheme, type Node, type MindmapForceNode } from "./mindmap"
 
     export let id: number = 0
     export let title: string = ""
@@ -9,6 +9,7 @@
 
     export let nodes: MindmapForceNode[] = []
     export let parentShowDetail: boolean = false
+    export let depth: number = 0
 
 
     $: x = nodes[id]?.x || 0
@@ -19,31 +20,41 @@
     }
 
     let width = 20;
-    let height = 30;
+    let contentHeight: number;
 
     let showDetail: boolean
     $: {
         showDetail = $focusId == id
     }
 
-    onMount(() => {
-        
-    })
+    $: styles = `
+        --node-colour: ${colourScheme[depth]}
+    `
 
 </script>
 
 <style>
     .topicnode {
-        fill: lightpink;
+        fill: var(--node-colour);
     }
 
     .topicnode foreignObject {
         font-size: 2px;
+        background-color: var(--node-colour);
     }
 
     .topicnode h3 {
         font-weight: 500;
         font-style: italic;
+    }
+
+    .topicnode p {
+        max-height: 10ch;
+        overflow-y: auto;
+    }
+
+    .content-container {
+        overflow: hidden;
     }
 </style>
 
@@ -52,36 +63,47 @@
 >
     <g class="topicnode"
     on:click={selectNode}
+    style={styles}
     >
         <rect
             x={x - width / 2}
-            y={y - height / 2}
+            y={y - (contentHeight||0) / 2}
             width={width}
-            height={height}
+            height={(contentHeight||0)}
         />
         <foreignObject
-            x={x - width / 2}
-            y={y - height / 2}
+            x={- width / 2}
+            y={- (contentHeight||0) / 2}
             width={width}
-            height={height}
+            height={(contentHeight||0)}
+            transform={`translate(${x} ${y})`}
         >
-            <h2>{title}</h2>
-            {#if (showDetail)}
-                <h3>Selected</h3>
-            {/if}
-            {#if (parentShowDetail)}
-                <h3>Parent Selected</h3>
-            {/if}
-            <p>
-                {description}
-            </p>
+            <div class="content-container"
+                bind:clientHeight={contentHeight}
+            >
+                <h2>{title}</h2>
+                {#if (showDetail)}
+                    <h3>Selected</h3>
+                {/if}
+                {#if (parentShowDetail)}
+                    <h3>Parent Selected</h3>
+                {/if}
+                <p>
+                    {description}
+                </p>
+            </div>
         
         </foreignObject>
     </g>
 
     {#each children as topic}
-        <!-- recursively define TopicNodes as children -->
-        <svelte:self {...topic} {nodes} parentShowDetail={parentShowDetail || showDetail}/>
+        <!-- recursively define TopicNodes as children 
+        svelte:self refers to current component (i.e. TopicNode)-->
+        <svelte:self 
+        {...topic} {nodes} 
+        parentShowDetail={parentShowDetail || showDetail}
+        depth={depth + 1}
+        />
         <line
             x1={x}
             y1={y}
@@ -89,6 +111,7 @@
             y2={nodes[topic.id]?.y}
             stroke="black"
             opacity=0.2
+            stroke-width=0.2
         />
     {/each}
 </g>

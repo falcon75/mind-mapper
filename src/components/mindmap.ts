@@ -1,25 +1,21 @@
 // Module to fetch mindmap data and export it
 
-import { writable } from "svelte/store"
 import type { SimulationNodeDatum, SimulationLinkDatum } from "d3";
 
 
-interface Node {
+export interface Node {
     id: number
     title: string
     description?: string
     children: Node[]
 }
 
-interface MindmapForceNode extends Node, SimulationNodeDatum {}
+export interface MindmapForceNode extends Node, SimulationNodeDatum {}
 
-interface MindmapForceLink extends SimulationLinkDatum<MindmapForceNode>{   
+export interface MindmapForceLink extends SimulationLinkDatum<MindmapForceNode>{   
 }
 
-
-const focusId = writable(0)
-
-const mindmapData: Node[] = [
+export const mindmapData: Node[] = [
     {
         id: 0,
         title: "subject",
@@ -37,7 +33,23 @@ const mindmapData: Node[] = [
             { 
                 id: 3,
                 title: "topic2", 
-                children: [] 
+                children: [
+                    { 
+                        id: 5,
+                        title: "detail 2a", 
+                        children: [] 
+                    },
+                    { 
+                        id: 6,
+                        title: "detail 2b", 
+                        children: [] 
+                    },
+                    { 
+                        id: 7,
+                        title: "detail 2c", 
+                        children: [] 
+                    },
+                ] 
             },
             { 
                 id: 4,
@@ -46,10 +58,12 @@ const mindmapData: Node[] = [
             }
         ]
     }
-
-
-    
 ]
 
-export { focusId, mindmapData, 
-    type Node, type MindmapForceNode, type MindmapForceLink }
+export const colourScheme = [
+    "#D4E4BC",
+    "#96ACB7",
+    "#36558F",
+    "#40376E",
+    "#48233C"
+]
