@@ -1,33 +1,32 @@
 <script lang="ts">
     import { mindmapData, type Node, type MindmapForceNode, type MindmapForceLink } from "./mindmap";
+    import { focusId, view, viewValues, getViewBox } from "./focus";
     import TopicNode from "./TopicNode.svelte";
     import { onMount } from "svelte";
 
     import * as d3 from "d3";
-    import { tweened } from "svelte/motion";
-    import { cubicInOut } from "svelte/easing";
 
-    let renderedNodes = []
+    let renderedNodes = [];
+    let updateZoom;
+    let svg: SVGSVGElement;
 
-    // Zoom into relevant section when focusId is changed
-    const initialView = [-100, -100, 200, 200]
-
-    const view = tweened([initialView], {easing: cubicInOut, duration: 1000})
+    let containerHeight: number;
+    let containerWidth: number;
 
     // Convert to nodes for force simulation
 
-    const flat = (data: Node[], nodes: MindmapForceNode[], links: MindmapForceLink[]) => {
+    const flat = (data: Node[], nodes: MindmapForceNode[], links: MindmapForceLink[], depth: number = 0) => {
             data.forEach((node) => {
                 // node.id = nodes.length
                 nodes.push({...node})
                 if (node.children.length > 0) {
                     // if this node has children, create force links
                     node.children.forEach((child) => {
-                        links.push({source: node.id, target: child.id})
+                        links.push({source: node.id, target: child.id, depth})
                     });
                     
                     // then recursively flatten
-                    ({nodes, links} = flat(node.children, nodes, links))
+                    ({nodes, links} = flat(node.children, nodes, links, depth+1))
                 }
             })
             nodes[0].fx = 0
@@ -45,13 +44,24 @@
                 .strength(-50)
             )
             .force("link", d3.forceLink(links)
-                .id((d) => (d as MindmapForceNode).id)
-                .strength(0.5)
-                .distance(40)
+                .id(d => (d as MindmapForceNode).id)
+                .strength(1)
+                .distance(20)
             )
             .on("tick", () => {
                 renderedNodes = [...nodes]
+                updateZoom = !updateZoom
             })
+            .on("end", () => {
+
+            })
+
+        // simulation.restart()
+
+        // only set focus once all elements have been rendered
+        // assume id 0 is reserved for root element
+        $focusId = 0
+        console.log('set focusId')
     })
 
 </script>
@@ -64,14 +74,26 @@
         margin-inline: auto;
         overflow: hidden;
     }
+
+    .mindmap svg {
+        width: 100%;
+        height: 100%;
+    }
 </style>
 
-<div class="mindmap">
+<div class="mindmap"
+    bind:clientHeight={containerHeight}
+    bind:clientWidth={containerWidth}
+>
     <svg
-        viewBox="-100 -100 200 200"
+        id="mindmap-svg"
+        viewBox={$view.join(" ")}
+        bind:this={svg}
     >
         {#each mindmapData as topic}
-            <TopicNode {...topic} nodes={renderedNodes}/>
+            <TopicNode {...topic} nodes={renderedNodes} {updateZoom}
+            {svg} {containerHeight} {containerWidth}
+            />
         {/each}
     </svg>
 </div>

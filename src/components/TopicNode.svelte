@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { focusId } from "./focus";
+    import { onMount } from "svelte";
+
+    import { focusId, view, svgPoint, getViewBox } from "./focus";
     import { colourScheme, type Node, type MindmapForceNode } from "./mindmap"
 
     export let id: number = 0
@@ -10,13 +12,45 @@
     export let nodes: MindmapForceNode[] = []
     export let parentShowDetail: boolean = false
     export let depth: number = 0
+    export let updateZoom: boolean = false
+
+    export let svg: SVGSVGElement;
+    export let containerHeight;
+    export let containerWidth;
 
 
     $: x = nodes[id]?.x || 0
     $: y = nodes[id]?.y || 0
 
+    // Focus on current element if selected
+    // svgPoint function is required to account for DOM -> SVG coordinates
+    let el: SVGElement;
+
+    $: {
+        if ($focusId == id) {
+            if (svg !== undefined && el !== undefined) {
+                const viewbox = getViewBox(svg, el, {x, y}, containerHeight, containerWidth)
+                view.set(viewbox)
+            }
+        }
+    }
+
     const selectNode = () => {
-        $focusId = id
+        if ($focusId == id) {
+            // When you click on the root node, resize the zoom
+            // dodgy workaround to fix following error (TODO, fix):
+            //  when the d3 simulation is still running, the bounding box of
+            //  the nodes are centred at the middle. Can fix by initialising to
+            //  larger values?
+            if (id == 0) {
+                const viewbox = getViewBox(svg, el, {x, y}, containerHeight, containerWidth)
+                view.set(viewbox)
+            }
+            // (end of workaround)
+            $focusId = 0
+        } else {
+            $focusId = id
+        }
     }
 
     let width = 20;
@@ -28,9 +62,9 @@
     }
 
     $: styles = `
-        --node-colour: ${colourScheme[depth]}
+        --node-colour: ${colourScheme[depth]};
+        --font-size: 2px;
     `
-
 </script>
 
 <style>
@@ -39,7 +73,7 @@
     }
 
     .topicnode foreignObject {
-        font-size: 2px;
+        font-size: var(--font-size);
         background-color: var(--node-colour);
     }
 
@@ -49,8 +83,7 @@
     }
 
     .topicnode p {
-        max-height: 10ch;
-        overflow-y: auto;
+        overflow: hidden;
     }
 
     .content-container {
@@ -59,7 +92,7 @@
 </style>
 
 <g class="topic"
-    
+bind:this={el}
 >
     <g class="topicnode"
     on:click={selectNode}
@@ -100,9 +133,10 @@
         <!-- recursively define TopicNodes as children 
         svelte:self refers to current component (i.e. TopicNode)-->
         <svelte:self 
-        {...topic} {nodes} 
-        parentShowDetail={parentShowDetail || showDetail}
-        depth={depth + 1}
+            {...topic} {nodes} {svg} {containerHeight} {containerWidth}
+            parentShowDetail={parentShowDetail || showDetail}
+            depth={depth + 1}
+            {updateZoom}
         />
         <line
             x1={x}

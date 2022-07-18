@@ -1,6 +1,7 @@
 // Module to fetch mindmap data and export it
 
 import type { SimulationNodeDatum, SimulationLinkDatum } from "d3";
+import type TopicNodeSvelte from "./TopicNode.svelte";
 
 
 export interface Node {
@@ -8,11 +9,13 @@ export interface Node {
     title: string
     description?: string
     children: Node[]
+    // ref?: TopicNodeSvelte
 }
 
 export interface MindmapForceNode extends Node, SimulationNodeDatum {}
 
 export interface MindmapForceLink extends SimulationLinkDatum<MindmapForceNode>{   
+    depth: number
 }
 
 export const mindmapData: Node[] = [
@@ -27,7 +30,11 @@ export const mindmapData: Node[] = [
                 children: [{
                     id: 2,
                     title: "detail 1a",
-                    children: []
+                    children: [{
+                        id: 8,
+                        title: "detail 1ai",
+                        children: []
+                    }]
                 }]
             },
             { 
@@ -37,6 +44,11 @@ export const mindmapData: Node[] = [
                     { 
                         id: 5,
                         title: "detail 2a", 
+                        description: `Lorem ipsum dolor sit amet, consectetur 
+                        adipiscing elit. Cras pellentesque sed risus ut cursus. 
+                        Curabitur a tempor orci, non fringilla nibh. Nunc facilisis 
+                        sem leo, vel sagittis nisi luctus quis. Mauris ornare nisi 
+                        non euismod ornare`,
                         children: [] 
                     },
                     { 
@@ -54,7 +66,11 @@ export const mindmapData: Node[] = [
             { 
                 id: 4,
                 title: "topic3", 
-                children: [] 
+                children: [{ 
+                    id: 9,
+                    title: "detail 3a", 
+                    children: [] 
+                }] 
             }
         ]
     }
