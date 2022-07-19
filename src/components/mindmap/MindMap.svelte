@@ -45,6 +45,11 @@
                     .attr("y1", d => d.source.y)
                     .attr("x2", d => d.target.x)
                     .attr("y2", d => d.target.y);
+
+                // start the zoom with a low stiffness while simulation settles
+                if (view.stiffness < 0.05) {
+                    view.stiffness += 0.0005
+                }
             })
             .on("end", () => {
 

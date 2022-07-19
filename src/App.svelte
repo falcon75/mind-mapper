@@ -1,10 +1,19 @@
 <script lang="ts">
-  import logo from './assets/svelte.png'
-  import MindMap from './components/MindMap.svelte';
+  import MindMap from './components/mindmap/MindMap.svelte';
+  import { draw } from "svelte/transition"
+  import { onMount } from 'svelte';
+  import Logo from './components/icons/Logo.svelte';
+
+  let visible = false;
+  onMount(() => {
+    visible=true
+  })
 </script>
 
 <main>
-  <img src={logo} alt="Svelte Logo" />
+  {#if visible}
+  <Logo />
+  {/if}
   <h1>Hello Mind Mapper!</h1>
 
   <p>
@@ -29,11 +38,6 @@
     text-align: center;
     padding: 1em;
     margin: 0 auto;
-  }
-
-  img {
-    height: 16rem;
-    width: 16rem;
   }
 
   h1 {

@@ -5,7 +5,7 @@ import { cubicInOut } from "svelte/easing";
 
 export const focusId = writable(-1)
 
-const initialView = [-100, -100, 200, 200]
+const initialView = [-1000, -1000, 2000, 2000]
 export const viewValues = writable(initialView)
 export const view = spring(initialView, {
     stiffness: 0.05, damping: 1.0
