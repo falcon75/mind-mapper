@@ -1,13 +1,11 @@
 <script lang="ts">
-    import { mindmapData, dataStore, type Node } from "./mindmap";
+    import { mindmapData, type Node } from "./mindmap";
     import { focusId, view, viewValues, getViewBox } from "./focus";
     import TopicNode from "./TopicNode.svelte";
     import { onMount } from "svelte";
 
     import * as d3 from "d3";
 
-    let renderedNodes = [];
-    let updateZoom;
     let svg: SVGSVGElement;
 
     let containerHeight: number;
@@ -16,6 +14,18 @@
     // Convert to nodes for force simulation
     let root = d3.hierarchy<Node>(mindmapData) as d3.HierarchyPointNode<Node>
 
+    let simulation = d3.forceSimulation(root.descendants())
+        .force("centre", d3.forceCenter(0, 0))
+        .force("charge", d3.forceManyBody()
+            .strength(-50)
+        )
+        .force("link", d3.forceLink(root.links())
+            .strength(1)
+            .distance(20)
+        ).tick(5) // initial ticks before rendering, set bounds
+
+    let renderedNodes = simulation.nodes()[0]
+    console.log(root)
     onMount(() => {
         const linkLines = d3.select("svg")
         .append("g")
@@ -26,30 +36,15 @@
         .data(root.links())
         .join("line")
 
-        let simulation = d3.forceSimulation(root.descendants())
-            .force("centre", d3.forceCenter(0, 0))
-            .force("charge", d3.forceManyBody()
-                .strength(-50)
-            )
-            .force("link", d3.forceLink(root.links())
-                .strength(1)
-                .distance(20)
-            )
+        simulation
             // TODO: add collision force
             .on("tick", () => {
-                renderedNodes = [...root.descendants()]
-                $dataStore = root
-                updateZoom = !updateZoom
+                renderedNodes = simulation.nodes()[0]
                 linkLines
                     .attr("x1", d => d.source.x)
                     .attr("y1", d => d.source.y)
                     .attr("x2", d => d.target.x)
                     .attr("y2", d => d.target.y);
-
-                // start the zoom with a low stiffness while simulation settles
-                if (view.stiffness < 0.05) {
-                    view.stiffness += 0.0005
-                }
             })
             .on("end", () => {
 
@@ -89,8 +84,7 @@
         bind:this={svg}
     >
         <TopicNode 
-            parentNode={root}
-            {updateZoom}
+            parentNode={renderedNodes}
             {svg} {containerHeight} {containerWidth}
         />
     </svg>

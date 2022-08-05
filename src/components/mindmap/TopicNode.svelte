@@ -9,7 +9,6 @@
 
     export let parentShowDetail: boolean = false
     export let depth: number = 0
-    export let updateZoom: boolean = false
 
     export let svg: SVGSVGElement;
     export let containerHeight;
@@ -17,15 +16,11 @@
 
     const {title, description, id} = parentNode.data
 
-
-    // TODO: currently very questionable way of doing this
-    let x = parentNode.x || 0
-    let y = parentNode.y || 0
+    let x = parentNode.x 
+    let y = parentNode.y
     $: {
-        if (updateZoom) {
-            x = parentNode.x;
-            y = parentNode.y;
-        }
+        x = parentNode.x;
+        y = parentNode.y;
     }
     // Focus on current element if selected
     // svgPoint function is required to account for DOM -> SVG coordinates
@@ -149,7 +144,6 @@ bind:this={el}
             parentShowDetail={parentShowDetail || showDetail}
             parentNode={node}
             depth={depth + 1}
-            {updateZoom}
         />
     {/each}
     {/if}

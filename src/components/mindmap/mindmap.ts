@@ -1,9 +1,7 @@
 // Module to fetch mindmap data and export it
 
-import type { SimulationNodeDatum, SimulationLinkDatum } from "d3";
 import type TopicNodeSvelte from "./TopicNode.svelte";
 import { writable } from "svelte/store"
-import * as d3 from "d3";
 
 
 export interface Node {
@@ -48,12 +46,12 @@ export const mindmapData: Node = {
                     children: [] 
                 },
                 { 
-                    id: 6,
+                    id: 7,
                     title: "detail 2b", 
                     children: [] 
                 },
                 { 
-                    id: 7,
+                    id: 6,
                     title: "detail 2c", 
                     children: [] 
                 },
@@ -78,5 +76,3 @@ export const colourScheme = [
     "#40376E",
     "#48233C"
 ]
-
-export const dataStore = writable(d3.hierarchy(mindmapData))
