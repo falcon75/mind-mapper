@@ -5,6 +5,7 @@
     import { onMount } from "svelte";
 
     import * as d3 from "d3";
+    import Editor from "../editor/Editor.svelte";
 
     let svg: SVGSVGElement;
 
@@ -25,20 +26,22 @@
         ).tick(5) // initial ticks before rendering, set bounds
 
     let renderedNodes = simulation.nodes()[0]
-    console.log(root)
+
     onMount(() => {
         const linkLines = d3.select("svg")
         .append("g")
-        .attr("stroke", "#000")
-        .attr("stroke-width", "1")
-        .attr("opacity", "0.5")
         .selectAll("line")
         .data(root.links())
         .join("line")
 
+        .attr("stroke", "#000")
+        .attr("opacity", "0.5")
+        .attr("stroke-width", d => 0.5 ** d.source.depth)
+
         simulation
             // TODO: add collision force
             .on("tick", () => {
+                // forces rendering update
                 renderedNodes = simulation.nodes()[0]
                 linkLines
                     .attr("x1", d => d.source.x)
@@ -46,11 +49,7 @@
                     .attr("x2", d => d.target.x)
                     .attr("y2", d => d.target.y);
             })
-            .on("end", () => {
-
-            })
-
-        // simulation.restart()
+            .on("end", () => {})
 
         // only set focus once all elements have been rendered
         // assume id 0 is reserved for root element
@@ -61,16 +60,19 @@
 
 <style>
     .mindmap {
-        background-color: lightgray;
-        width: 50vw;
-        height: 50vw;
+        width: 80%;
         margin-inline: auto;
-        overflow: hidden;
+        /* overflow: hidden; */
+
+        display: flex;
+        justify-content: center;
+        gap: 1em;
     }
 
     .mindmap svg {
-        width: 100%;
-        height: 100%;
+        background-color: lightgray;
+        width: 600px;
+        height: 600px;
     }
 </style>
 
@@ -78,6 +80,8 @@
     bind:clientHeight={containerHeight}
     bind:clientWidth={containerWidth}
 >
+    <Editor nodes={root}/>
+
     <svg
         id="mindmap-svg"
         viewBox={$view.join(" ")}

@@ -3,6 +3,7 @@
   import { draw } from "svelte/transition"
   import { onMount } from 'svelte';
   import Logo from './components/icons/Logo.svelte';
+import Editor from './components/editor/Editor.svelte';
 
   let visible = false;
   onMount(() => {
@@ -32,6 +33,12 @@
   :root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+
+  *,
+  *::after,
+  *::before {
+    box-sizing: border-box;
   }
 
   main {

@@ -2,6 +2,7 @@ import { writable } from "svelte/store"
 import { spring } from "svelte/motion";
 import { cubicInOut } from "svelte/easing";
 
+// TODO: use d3Scale for view
 
 export const focusId = writable(-1)
 

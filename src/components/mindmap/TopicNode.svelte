@@ -37,16 +37,7 @@
 
     const selectNode = () => {
         if ($focusId == id) {
-            // When you click on the root node, resize the zoom
-            // dodgy workaround to fix following error (TODO, fix):
-            //  when the d3 simulation is still running, the bounding box of
-            //  the nodes are centred at the middle. Can fix by initialising to
-            //  larger values?
-            if (id == 0) {
-                const viewbox = getViewBox(svg, el, {x, y}, containerHeight, containerWidth)
-                view.set(viewbox)
-            }
-            // (end of workaround)
+
             $focusId = 0
         } else {
             $focusId = id
@@ -69,6 +60,8 @@
         transform-origin: center;
         transform-box: fill-box;
         transform: scale(${scale});
+
+        user-select: ${showDetail ? "auto" : "none"};
     `
 </script>
 
